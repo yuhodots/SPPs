@@ -12,9 +12,10 @@ TBU
 
 ### 3. NF-ResNets w/ PyTorch
 
-There are ResNets and NF-ResNets files in the `models` directory.
+There are NF-ResNets files in the `models` directory.
 
-I added Beta update codes in [vballoli's codes](https://github.com/vballoli/nfnets-pytorch) for a more accurate reproduction of the original paper. 
+- I added Beta update codes in [vballoli's codes](https://github.com/vballoli/nfnets-pytorch) for a more accurate reproduction of the original paper.
+- I added ResNet variants(e.g. ResNet32) which are composed of 3 stages and only use BasicBlock. Original ResNet architectures are composed of 4 stages and use BasicBlock or Bottleneck.
 
 
 ## How to Use?
