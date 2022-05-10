@@ -3,7 +3,7 @@ from torch import Tensor
 import torch.nn as nn
 from typing import Type, Any, Callable, Union, List, Optional
 
-from torch_ver.models.base import WSConv2d, ScaledStdConv2d
+from models.base import WSConv2d, ScaledStdConv2d
 
 from functools import partial
 
