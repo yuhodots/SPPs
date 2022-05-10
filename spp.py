@@ -2,7 +2,7 @@ import torch
 import fnmatch
 from torchvision.models.resnet import _resnet, Bottleneck
 from matplotlib import pyplot as plt
-from matplotlib import animation
+from celluloid import Camera
 
 
 # Model used in Brock et al.,
@@ -51,6 +51,10 @@ class ActivationStatsHook(object):
             module.register_forward_hook(self._create_hook(hook_fn))
             self.info[hook_fn.__name__].append(name)
 
+    def clear_stats(self):
+        hook_fns = self.hook_fns
+        self.stats = dict((hook_fn.__name__, []) for hook_fn in hook_fns)
+
     def extract_spp_stats(self, x=None):
         if x is None:
             input_shape = [8, 3, 224, 224]
@@ -71,8 +75,6 @@ class ActivationStatsAnimation(object):
     def _make_fig(self, ax, data):
         avg_sq_ch_mean, avg_ch_var, avg_ch_var_residual = data
 
-        plt.axes(ylim=(-1, self.y_max))
-
         ax[0].clear()
         ax[0].plot(avg_sq_ch_mean, label="avg_sq_ch_mean")
         ax[0].set_ylabel('Average Square Channel Mean')
@@ -88,21 +90,20 @@ class ActivationStatsAnimation(object):
         ax[2].set_ylabel('Residual Average Channel Variance')
         ax[2].grid()
 
-    # frames of FuncAnimation
-    def _data_gen(self):
-        for k in self.log.keys():
-            yield self.log[k]['avg_sq_ch_mean'], self.log[k]['avg_ch_var'], self.log[k]['avg_ch_var_residual']
-
     def save(self, save_path):
         assert save_path is not None, "There is no `save_path`"
         fig, ax = plt.subplots(1, 3, figsize=(18, 3), sharey=True)
+        camera = Camera(fig)
 
-        # func of FuncAnimation
-        def animate(data):
+        for k in self.log.keys():
+            data = (self.log[k]['avg_sq_ch_mean'],
+                    self.log[k]['avg_ch_var'],
+                    self.log[k]['avg_ch_var_residual'])
             self._make_fig(ax, data)
+            camera.snap()
 
-        anim = animation.FuncAnimation(fig, animate, self._data_gen)
-        anim.save(save_path, writer=animation.PillowWriter(fps=self.fps))
+        animation = camera.animate(interval=50, blit=True)
+        animation.save(save_path)
 
 
 class SignalPropagationPlots(object):
@@ -125,6 +126,7 @@ class SignalPropagationPlots(object):
         self._hook_info()
 
     def stats(self, x=None):
+        self.hook.clear_stats()
         return self.hook.extract_spp_stats(x)
 
     @staticmethod
@@ -158,7 +160,7 @@ def main():
     # Configuration
     model = resnet_v2_600()
     img_save_path = "assets/img/spp.png"
-    gif_save_path = "assets/img/spp.gif"
+    mp4_save_path = "assets/img/spp.mp4"
     x = torch.normal(0., 1., [8, 3, 224, 224])
 
     # Initialize SPPs
@@ -167,14 +169,13 @@ def main():
 
     # Save images
     stats = spp.stats(x)
-    spp.plot(stats)
     spp.save(stats, save_path=img_save_path)
 
-    # Save GIF
+    # Save video
     for step in range(10):
         stats = spp.stats(x + step/10)
         spp.anim.write(stats, step)
-    spp.anim.save(save_path=gif_save_path)
+    spp.anim.save(save_path=mp4_save_path)
 
 
 if __name__ == "__main__":
