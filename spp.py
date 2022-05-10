@@ -173,7 +173,7 @@ def main():
 
     # Save video
     for step in range(10):
-        stats = spp.stats(x + step/10)
+        stats = spp.stats(x)
         spp.anim.write(stats, step)
     spp.anim.save(save_path=mp4_save_path)
 

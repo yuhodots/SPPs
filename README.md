@@ -4,11 +4,23 @@
 
 ### 1. Signal Propagation Plots
 
-TBU
+ResNet-V2-600
+
+- TBU
+
+ResNet32
+
+- TBU
+
+NF-ResNet32
+
+- TBU
 
 ### 2. Signal Propagation Videos
 
-TBU
+Cifar100 training with ResNet-V2-600
+
+- TBU
 
 ### 3. NF-ResNets w/ PyTorch
 
@@ -20,7 +32,7 @@ There are NF-ResNets files in the `models` directory.
 
 ## How to Use?
 
-TBU
+- TBU
 
 ## References
 
