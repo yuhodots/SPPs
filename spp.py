@@ -1,6 +1,7 @@
 import torch
 import fnmatch
 from torchvision.models.resnet import _resnet, Bottleneck
+from models.nf_resnet32 import nf_resnet32
 from matplotlib import pyplot as plt
 from celluloid import Camera
 
@@ -158,13 +159,14 @@ class SignalPropagationPlots(object):
 
 def main():
     # Configuration
-    model = resnet_v2_600()
+    model = nf_resnet32()
     img_save_path = "assets/img/spp.png"
     mp4_save_path = "assets/img/spp.mp4"
-    x = torch.normal(0., 1., [8, 3, 224, 224])
+    x = torch.normal(0., 1., [256, 3, 32, 32])
+    hook_fn_locs = [['layer?.?'], ['layer?.?'], ['layer?.?.conv2']]
 
     # Initialize SPPs
-    spp = SignalPropagationPlots(model)
+    spp = SignalPropagationPlots(model, hook_fn_locs=hook_fn_locs)
     spp.summary()
 
     # Save images

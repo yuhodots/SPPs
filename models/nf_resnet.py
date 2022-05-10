@@ -217,17 +217,22 @@ class NFResNet(nn.Module):
                                bias=False)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.layer1 = self._make_layer(
-            block, 64, layers[0], alpha=alpha, activation=activation, base_conv=base_conv)
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
-                                       dilate=replace_stride_with_dilation[0], alpha=alpha,
-                                       activation=activation, base_conv=base_conv)
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
-                                       dilate=replace_stride_with_dilation[1], alpha=alpha,
-                                       activation=activation, base_conv=base_conv)
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
-                                       dilate=replace_stride_with_dilation[2], alpha=alpha,
-                                       activation=activation, base_conv=base_conv)
+
+        self.layer1, expected_std = self._make_layer(block, 64, layers[0],
+                                                     alpha=alpha, init_expected_std=1.0,
+                                                     activation=activation, base_conv=base_conv)
+        self.layer2, expected_std = self._make_layer(block, 128, layers[1],
+                                                     stride=2, dilate=replace_stride_with_dilation[0],
+                                                     alpha=alpha, init_expected_std=expected_std,
+                                                     activation=activation, base_conv=base_conv)
+        self.layer3, expected_std = self._make_layer(block, 256, layers[2],
+                                                     stride=2, dilate=replace_stride_with_dilation[1],
+                                                     alpha=alpha, init_expected_std=expected_std,
+                                                     activation=activation, base_conv=base_conv)
+        self.layer4, expected_std = self._make_layer(block, 512, layers[3],
+                                                     stride=2, dilate=replace_stride_with_dilation[2],
+                                                     alpha=alpha, init_expected_std=expected_std,
+                                                     activation=activation, base_conv=base_conv)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
 
@@ -249,7 +254,7 @@ class NFResNet(nn.Module):
                     nn.init.constant_(m.bn2.weight, 0)
 
     def _make_layer(self, block: Type[Union[BasicBlock, Bottleneck]], planes: int, blocks: int,
-                    stride: int = 1, dilate: bool = False, alpha: float = 0.2,
+                    stride: int = 1, dilate: bool = False, alpha: float = 0.2, init_expected_std: float = 1.,
                     activation: str = 'relu', base_conv: nn.Conv2d = ScaledStdConv2d) -> nn.Sequential:
         downsample = None
         previous_dilation = self.dilation
@@ -263,21 +268,23 @@ class NFResNet(nn.Module):
             )
 
         layers = []
-        expected_std = 1.0
-        beta = 1. / expected_std
+        beta = 1. / init_expected_std
         layers.append(block(self.inplanes, planes, stride, downsample, self.groups,
                             self.base_width, previous_dilation, alpha=alpha, beta=beta, activation=activation,
                             base_conv=base_conv))
+        expected_std = 1.0
+        expected_std = (expected_std ** 2 + alpha ** 2) ** 0.5
+
         self.inplanes = planes * block.expansion
-        for _ in range(1, blocks):
-            expected_std = (expected_std ** 2 + alpha ** 2) ** 0.5
+        for i in range(1, blocks):
             beta = 1. / expected_std
             layers.append(block(self.inplanes, planes, groups=self.groups,
                                 base_width=self.base_width, dilation=self.dilation,
                                 alpha=alpha, beta=beta, activation=activation,
                                 base_conv=base_conv))
+            expected_std = (expected_std ** 2 + alpha ** 2) ** 0.5
 
-        return nn.Sequential(*layers)
+        return nn.Sequential(*layers), expected_std
 
     def _forward_impl(self, x: Tensor) -> Tensor:
         # See note [TorchScript super()]
