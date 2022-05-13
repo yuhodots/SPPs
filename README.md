@@ -1,6 +1,6 @@
 # Signal Propagation Plots
 
-> Example results of SPPs
+> Example results of SPPs (Brock et al., 2021)
 
 ## 1. Signal Propagation Plots
 
