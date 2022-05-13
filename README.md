@@ -4,21 +4,21 @@
 
 ### 1. Signal Propagation Plots
 
-ResNet-V2-600
+#### ResNet-V2-600
 
 ![img](assets/img/spp_resnet_v2_600.png)
 
-ResNet152
+#### ResNet152
 
 ![img](assets/img/spp_resnet152.png)
 
-NF-ResNet152
+#### NF-ResNet152
 
 - TBU
 
 ### 2. Signal Propagation Videos
 
-Cifar100 training with ResNet-V2-600
+In original paper, SPPs are checked only during the model initialization phase. I wondered how SPPs change not only in model initialization but also during the training phase. Therefore, during training, the signal propagation values were saved in the logger, and after training the model, all SPPs were collected so that they could be checked in the form of a video. Below are the video results of SPPs which trained about cifar100 dataset using the ResNet-V2-600 model.
 
 - TBU
 
