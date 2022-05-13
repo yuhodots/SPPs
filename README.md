@@ -24,7 +24,7 @@ In original paper, SPPs are checked only during the model initialization phase. 
 
 Therefore, during training, the signal propagation values were saved in the logger, and after training the model, all SPPs were collected so that they could be checked in the form of a video. Below are the video result of SPPs which trained about cifar100 dataset using ResNet-50 model.
 
-![img](assets/spp_video.gif)
+![img](assets/spp_resnet50.gif)
 
 ## References
 
