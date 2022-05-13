@@ -19,11 +19,9 @@ def get_train_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    cifar100_training = torchvision.datasets.CIFAR100(root='./data', train=True, download=True,
-                                                      transform=transform_train)
-    cifar100_training_loader = DataLoader(cifar100_training, shuffle=shuffle, num_workers=num_workers,
-                                          batch_size=batch_size)
-    return cifar100_training_loader
+    train_set = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
+    train_loader = DataLoader(train_set, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
+    return train_loader
 
 
 def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
@@ -31,9 +29,9 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
-    cifar100_test = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
-    cifar100_test_loader = DataLoader(cifar100_test, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
-    return cifar100_test_loader
+    test_set = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
+    test_loader = DataLoader(test_set, shuffle=shuffle, num_workers=num_workers, batch_size=batch_size)
+    return test_loader
 
 
 def train(args, model, epoch, loss_function, optimizer, train_loader):
@@ -57,7 +55,7 @@ def train(args, model, epoch, loss_function, optimizer, train_loader):
 
 
 @torch.no_grad()
-def eval_training(args, model, epoch, loss_function, test_loader):
+def evaluation(args, model, epoch, loss_function, test_loader):
     model.eval()
     test_loss = 0.0
     correct = 0.0
@@ -114,7 +112,7 @@ def main():
     for epoch in range(1, args.epoch + 1):
         train_scheduler.step(epoch)
         train(args, model, epoch, loss_function, optimizer, train_loader)
-        eval_training(args, model, epoch, test_loader)
+        evaluation(args, model, epoch, test_loader)
 
 
 if __name__ == '__main__':
