@@ -20,9 +20,11 @@ I referred to the [@amaarora's](https://gist.github.com/amaarora) [code](https:/
 
 ## 2. Signal Propagation Videos
 
-In original paper, SPPs are checked only during the model initialization phase. I wondered how SPPs change not only in model initialization but also during the training phase. Therefore, during training, the signal propagation values were saved in the logger, and after training the model, all SPPs were collected so that they could be checked in the form of a video. Below are the video results of SPPs which trained about cifar100 dataset using the ResNet-V2-600 model.
+In original paper, SPPs are checked only during the model initialization phase. I wondered how SPPs change not only in model initialization but also during the training phase. 
 
-- TBU
+Therefore, during training, the signal propagation values were saved in the logger, and after training the model, all SPPs were collected so that they could be checked in the form of a video. Below are the video result of SPPs which trained about cifar100 dataset using ResNet-50 model.
+
+![img](assets/spp_video.gif)
 
 ## References
 
