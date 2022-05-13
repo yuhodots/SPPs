@@ -1,7 +1,7 @@
 import torch
 import fnmatch
-from models.nf_resnet import nf_resnet152
-from models.resnet import resnet152, resnet_v2_600
+from timm.models import nf_resnet101
+from models.resnet import resnet101, resnet_v2_600
 from matplotlib import pyplot as plt
 from celluloid import Camera
 
@@ -175,7 +175,11 @@ def test(model, noise, tag, hook_fn_locs, save_video=False):
 
 if __name__ == "__main__":
     x = torch.normal(0., 1., [8, 3, 224, 224])
-    test(resnet_v2_600(), x, "resnet_v2_600", None)
-    test(resnet152(), x, "resnet152", None)
-    test(nf_resnet152(), x, "nf_resnet152",
-         [['layer?.?', 'layer?.??'], ['layer?.?', 'layer?.??'], ['layer?.?.conv3', 'layer?.??.conv3']])
+    hook_fn_locs = [['stem.?', 'stages.?.?', 'stages.?.??'],
+                    ['stem.?', 'stages.?.?', 'stages.?.??'],
+                    ['stages.?.?.conv3', 'stages.?.??.conv3']]
+
+    test(resnet_v2_600(), x, "resnet_v2_600", hook_fn_locs=None)
+    test(resnet101(), x, "resnet101", hook_fn_locs=None)
+    test(nf_resnet101(), x, "nf_resnet101", hook_fn_locs=hook_fn_locs)
+

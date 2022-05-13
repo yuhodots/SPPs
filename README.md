@@ -1,36 +1,26 @@
 # Signal Propagation Plots
 
-## Features
+> Example results for SPPs
 
-### 1. Signal Propagation Plots
+## 1. Signal Propagation Plots
 
-#### ResNet-V2-600
+I referred to the [@amaarora's](https://gist.github.com/amaarora) [code](https://gist.github.com/amaarora/2c6199c3441c0d72f356f39fb9f59611).
+
+### ResNet-V2-600
 
 ![img](assets/img/spp_resnet_v2_600.png)
 
-#### ResNet152
+### ResNet101
 
-![img](assets/img/spp_resnet152.png)
+![img](assets/img/spp_resnet101.png)
 
-#### NF-ResNet152
+### NF-ResNet101
 
-- TBU
+![img](assets/img/spp_nf_resnet101.png)
 
-### 2. Signal Propagation Videos
+## 2. Signal Propagation Videos
 
 In original paper, SPPs are checked only during the model initialization phase. I wondered how SPPs change not only in model initialization but also during the training phase. Therefore, during training, the signal propagation values were saved in the logger, and after training the model, all SPPs were collected so that they could be checked in the form of a video. Below are the video results of SPPs which trained about cifar100 dataset using the ResNet-V2-600 model.
-
-- TBU
-
-### 3. NF-ResNets w/ PyTorch
-
-There are NF-ResNets files in the `models` directory.
-
-- I added Beta update codes in [vballoli's codes](https://github.com/vballoli/nfnets-pytorch) for a more accurate reproduction of the original paper.
-- I added ResNet variants(e.g. ResNet32) which are composed of 3 stages and only use BasicBlock. Original ResNet architectures are composed of 4 stages and use BasicBlock or Bottleneck.
-
-
-## How to Use?
 
 - TBU
 
@@ -47,13 +37,16 @@ Signal Propagation Plots
 }
 ```
 
-NF-ResNets w/ PyTorch
+I used NF-ResNets implemented by [Ross Wightman](https://github.com/rwightman) from [timm](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/nfnet.py).
 
 ```
-@misc{nfnets2021pytorch,
-  author = {Vaibhav Balloli},
-  title = {A PyTorch implementation of NFNets and Adaptive Gradient Clipping},
-  year = {2021},
-  howpublished = {\url{https://github.com/vballoli/nfnets-pytorch}}
+@misc{rw2019timm,
+  author = {Ross Wightman},
+  title = {PyTorch Image Models},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  doi = {10.5281/zenodo.4414861},
+  howpublished = {\url{https://github.com/rwightman/pytorch-image-models}}
 }
 ```
