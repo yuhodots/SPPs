@@ -6,13 +6,13 @@
 
 ResNet-V2-600
 
-- TBU
+![img](assets/img/spp_resnet_v2_600.png)
 
-ResNet32
+ResNet152
 
-- TBU
+![img](assets/img/spp_resnet152.png)
 
-NF-ResNet32
+NF-ResNet152
 
 - TBU
 

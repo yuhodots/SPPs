@@ -1,14 +1,9 @@
 import torch
 import fnmatch
-from torchvision.models.resnet import _resnet, Bottleneck
-from models.nf_resnet32 import nf_resnet32
+from models.nf_resnet import nf_resnet152
+from models.resnet import resnet152, resnet_v2_600
 from matplotlib import pyplot as plt
 from celluloid import Camera
-
-
-# Model used in Brock et al.,
-def resnet_v2_600(pretrained=False, progress=False, **kwargs):
-    return _resnet('resnet_v2_600', Bottleneck, [50, 50, 50, 50], pretrained, progress, **kwargs)
 
 
 # https://gist.github.com/amaarora/6ff337e2823f06ac74a88ac03b5e2576
@@ -157,28 +152,30 @@ class SignalPropagationPlots(object):
         plt.savefig(save_path)
 
 
-def main():
+def test(model, noise, tag, hook_fn_locs, save_video=False):
     # Configuration
-    model = nf_resnet32()
-    img_save_path = "assets/img/spp.png"
-    mp4_save_path = "assets/img/spp.mp4"
-    x = torch.normal(0., 1., [256, 3, 32, 32])
-    hook_fn_locs = [['layer?.?'], ['layer?.?'], ['layer?.?.conv2']]
+    img_save_path = f"assets/img/spp_{tag}.png"
+    mp4_save_path = f"assets/img/spp_{tag}.mp4"
 
     # Initialize SPPs
     spp = SignalPropagationPlots(model, hook_fn_locs=hook_fn_locs)
     spp.summary()
 
     # Save images
-    stats = spp.stats(x)
+    stats = spp.stats(noise)
     spp.save(stats, save_path=img_save_path)
 
     # Save video
-    for step in range(10):
-        stats = spp.stats(x)
-        spp.anim.write(stats, step)
-    spp.anim.save(save_path=mp4_save_path)
+    if save_video:
+        for step in range(10):
+            stats = spp.stats(noise)
+            spp.anim.write(stats, step)
+        spp.anim.save(save_path=mp4_save_path)
 
 
 if __name__ == "__main__":
-    main()
+    x = torch.normal(0., 1., [8, 3, 224, 224])
+    test(resnet_v2_600(), x, "resnet_v2_600", None)
+    test(resnet152(), x, "resnet152", None)
+    test(nf_resnet152(), x, "nf_resnet152",
+         [['layer?.?', 'layer?.??'], ['layer?.?', 'layer?.??'], ['layer?.?.conv3', 'layer?.??.conv3']])
