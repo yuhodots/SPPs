@@ -1,6 +1,6 @@
 import torchsummary
-from models.resnet32 import resnet32
-from models.nf_resnet32 import nf_resnet32
+from models.resnet import resnet152
+from models.nf_resnet import nf_resnet152
 
 
 def count_parameters(model):
@@ -8,8 +8,8 @@ def count_parameters(model):
 
 
 def main():
-    torchsummary.summary(resnet32(num_classes=100), (3, 32, 32), device='cpu')
-    torchsummary.summary(nf_resnet32(activation='relu', num_classes=100), (3, 32, 32), device='cpu')
+    torchsummary.summary(resnet152(num_classes=100), (3, 224, 224), device='cpu')
+    torchsummary.summary(nf_resnet152(activation='relu', num_classes=100), (3, 224, 224), device='cpu')
 
 
 if __name__ == "__main__":
