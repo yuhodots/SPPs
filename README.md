@@ -1,6 +1,6 @@
 # Signal Propagation Plots
 
-> Example results for SPPs
+> Example results of SPPs
 
 ## 1. Signal Propagation Plots
 
