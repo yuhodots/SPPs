@@ -1,3 +1,4 @@
+import copy
 import torch
 import fnmatch
 from models.resnet import resnet101, resnet_v2_600
@@ -70,20 +71,14 @@ class ActivationStatsAnimation(object):
     def _make_fig(self, ax, data):
         avg_sq_ch_mean, avg_ch_var, avg_ch_var_residual = data
 
-        ax[0].clear()
-        ax[0].plot(avg_sq_ch_mean, label="avg_sq_ch_mean")
         ax[0].set_ylabel('Average Square Channel Mean')
-        ax[0].grid()
+        ax[0].plot(avg_sq_ch_mean, label="avg_sq_ch_mean", color="blue")
 
-        ax[1].clear()
-        ax[1].plot(avg_ch_var, label="avg_ch_var")
         ax[1].set_ylabel('Average Channel Variance')
-        ax[1].grid()
+        ax[1].plot(avg_ch_var, label="avg_ch_var", color="blue")
 
-        ax[2].clear()
-        ax[2].plot(avg_ch_var_residual, label="avg_ch_var_residual")
         ax[2].set_ylabel('Residual Average Channel Variance')
-        ax[2].grid()
+        ax[2].plot(avg_ch_var_residual, label="avg_ch_var_residual", color="blue")
 
     def save(self, save_path):
         assert save_path is not None, "There is no `save_path`"
@@ -97,7 +92,7 @@ class ActivationStatsAnimation(object):
             self._make_fig(ax, data)
             camera.snap()
 
-        animation = camera.animate(interval=50, blit=True)
+        animation = camera.animate(interval=100, blit=True)
         animation.save(save_path)
 
 
@@ -122,7 +117,7 @@ class SignalPropagationPlots(object):
 
     def stats(self, x=None):
         self.hook.clear_stats()
-        return self.hook.extract_spp_stats(x)
+        return copy.deepcopy(self.hook.extract_spp_stats(x))
 
     @staticmethod
     def _make_plot(stats):
