@@ -14,9 +14,6 @@ I referred to the [@amaarora's](https://gist.github.com/amaarora) [code](https:/
 
 ![img](assets/img/spp_resnet101.png)
 
-### NF-ResNet101
-
-![img](assets/img/spp_nf_resnet101.png)
 
 ## 2. Signal Propagation Videos
 
@@ -36,19 +33,5 @@ Signal Propagation Plots
   title={High-Performance Large-Scale Image Recognition Without Normalization},
   journal={arXiv preprint arXiv:},
   year={2021}
-}
-```
-
-I used NF-ResNets implemented by [Ross Wightman](https://github.com/rwightman) from [timm](https://github.com/rwightman/pytorch-image-models/blob/master/timm/models/nfnet.py).
-
-```
-@misc{rw2019timm,
-  author = {Ross Wightman},
-  title = {PyTorch Image Models},
-  year = {2019},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  doi = {10.5281/zenodo.4414861},
-  howpublished = {\url{https://github.com/rwightman/pytorch-image-models}}
 }
 ```
