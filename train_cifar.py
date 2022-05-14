@@ -9,6 +9,7 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from models.resnet import resnet50
+from spp import SignalPropagationPlots
 
 
 def get_train_dataloader(mean, std, batch_size=16, num_workers=2, shuffle=True):
@@ -105,14 +106,31 @@ def main():
         num_workers=4, batch_size=args.batch_size, shuffle=True
     )
 
+    # Training options
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[60, 120, 160], gamma=0.2)
 
+    # Signal Porpagation Plots
+    img_save_path = "assets/img/spp_resnet50_cifar100.png"
+    mp4_save_path = "assets/img/spp_resnet50_cifar100.mp4"
+    noise = torch.normal(0., 1., [8, 3, 32, 32])
+
+    spp = SignalPropagationPlots(model)
+    spp.summary()
+    stats = spp.stats(noise)
+    spp.save(stats, save_path=img_save_path)
+
+    # Train & Evaluation
     for epoch in range(1, args.epoch + 1):
         train_scheduler.step(epoch)
+        stats = spp.stats(noise)
+        spp.anim.write(stats, epoch)
+
         train(args, model, epoch, loss_function, optimizer, train_loader)
-        evaluation(args, model, epoch, test_loader)
+        evaluation(args, model, epoch, loss_function, test_loader)
+
+    spp.anim.save(save_path=mp4_save_path)
 
 
 if __name__ == '__main__':
